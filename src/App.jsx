@@ -16,6 +16,7 @@ function App() {
   const router = createBrowserRouter([
     {
       path: "/",
+      element: <Body />,
       children: [
         { path: "/", element: <MainContainer /> },
         { path: "watch", element: <Watch /> },

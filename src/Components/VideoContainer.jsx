@@ -14,8 +14,9 @@ function VideoContainer() {
   };
 
   return (
-    <div className="flex flex-wrap">
-      {videos.length > 0 && videos.map((item) => <VideoList info={item} />)}
+    <div className="flex flex-wrap mt-10">
+      {videos.length > 0 &&
+        videos.map((item) => <VideoList key={item.id} info={item} />)}
     </div>
   );
 }

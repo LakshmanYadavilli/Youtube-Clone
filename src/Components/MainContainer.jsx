@@ -1,7 +1,6 @@
 import React from "react";
-import Head from "./Head";
-import SideBar from "./SideBar";
-import { useState, useRef, useContext } from "react";
+
+import { useState, useRef, useContext, useEffect } from "react";
 import VideoContainer from "./VideoContainer";
 import ButtonList from "./ButtonList";
 import shortsIcon from "../assets/shorts-logo.png";
@@ -40,6 +39,7 @@ const MainContainer = () => {
     "Recently Uploaded",
     "New to You",
   ];
+
   const scrollBar = useRef(null);
   const leftBtn = () => {
     if (scrollBar.current) {
@@ -62,10 +62,6 @@ const MainContainer = () => {
 
   return (
     <div>
-      <Head sidebarHandler={sidebarHandler} />
-
-      {isSidebar && <SideBar sidebarHandler={sidebarHandler} />}
-
       <div className="mt-32">
         <div className=" relative flex flex-row">
           <div className=" fixed top-32  w-[10vw] h-screen  flex flex-col justify-start p-2 items-center">
@@ -89,7 +85,7 @@ const MainContainer = () => {
             <p>You</p>
           </div>
           <div className=" relative w-[90vw] ml-[10vw]  ">
-            <div className=" flex  overflow-hidden">
+            <div className="fixed top-20 flex  overflow-hidden bg-white p-2 w-full ">
               {!isBegin && (
                 <div className="w-[5vw] flex items-center justify-center text-2xl font-bold cursor-pointer">
                   <AiOutlineLeft onClick={leftBtn} />
@@ -110,7 +106,7 @@ const MainContainer = () => {
               )}
             </div>
 
-            <VideoContainer className="absolute top-56" />
+            <VideoContainer />
           </div>
         </div>
       </div>

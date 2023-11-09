@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Outlet } from "react-router-dom";
-import MainContainer from "./MainContainer";
+
 import Head from "./Head";
 import { context } from "../App";
 import SideBar from "./SideBar";
