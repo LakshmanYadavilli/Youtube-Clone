@@ -1,22 +1,63 @@
 import React, { useState, useEffect, useRef } from "react";
 import { BiMenu, BiSearch } from "react-icons/bi";
-
+import { useSelector, useDispatch } from "react-redux";
+import { addToCache } from "../utils/suggestionSlice";
+import { addData } from "../utils/videosSlice";
+import { youtubeApi } from "../utils/constants";
 import YoutubeIcon from "../assets/YouTubeLogo.png";
 import { suggestionUrl } from "../utils/constants";
+import { v4 } from "uuid";
 
 const Head = ({ sidebarHandler }) => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    fetchVideos();
+  }, []);
+  const fetchVideos = async () => {
+    const res = await fetch(youtubeApi);
+
+    const data = await res.json();
+    const obj = {};
+    data.items.map((item) => {
+      obj[item.id] = item;
+      obj[item.id] = {
+        ...obj[item.id],
+        comments: {
+          [v4()]: {
+            name: "Lakshman Yadavilli",
+            comment: "Great Work",
+            replies: [],
+          },
+        },
+      };
+    });
+    console.log({ obj });
+    dispatch(addData(obj));
+    // setVideos(data.items);
+  };
   const [value, setValue] = useState("");
-  const [on, setOn] = useState(false);
+  const suggestionCache = useSelector((state) => state.suggestion_cache);
+
+  const [showSuggestion, setShowSuggestion] = useState(false);
 
   const [suggestionData, setSuggestionData] = useState([]);
 
   const suggestion = async () => {
-    const res = await fetch(suggestionUrl + value);
-    const data = await res.json();
-    setSuggestionData(data[1]);
+    if (suggestionCache[value]) {
+      // console.log("if");
+      setSuggestionData(suggestionCache[value]);
+    } else {
+      // console.log("else");
+      const res = await fetch(suggestionUrl + value);
+      const data = await res.json();
+      setSuggestionData(data[1]);
+      let obj = { value };
+
+      value !== "" && dispatch(addToCache({ value, data: data[1] }));
+    }
   };
   useEffect(() => {
-    let timerId = setTimeout(suggestion, 500);
+    let timerId = setTimeout(suggestion, 300);
 
     return () => {
       clearTimeout(timerId);
@@ -24,12 +65,12 @@ const Head = ({ sidebarHandler }) => {
   }, [value]);
   return (
     <div className="fixed top-0 z-30 flex  justify-around items-center p-4 bg-white">
-      {on && suggestionData.length !== 0 && (
+      {showSuggestion && suggestionData.length !== 0 && (
         <div className=" fixed top-20 w-[40vw] left-[30vw] bg-white p-4 rounded-lg shadow-lg">
           {suggestionData.map((item) => (
-            <div className="flex">
+            <div key={item} className="flex">
               <BiSearch className="text-3xl p-1 cursor-pointer" />
-              <p key={item}>{item}</p>
+              <p>{item}</p>
             </div>
           ))}
         </div>
@@ -50,8 +91,8 @@ const Head = ({ sidebarHandler }) => {
           type="search"
           value={value}
           onChange={(event) => setValue(event.target.value)}
-          onFocus={() => setOn(true)}
-          onBlur={() => setOn(false)}
+          onFocus={() => setShowSuggestion(true)}
+          onBlur={() => setShowSuggestion(false)}
           placeholder="search"
           className=" outline-none p-2  border-gray-500 border-2 border-solid h-8 w-[80%]  rounded-l-full"
         />
