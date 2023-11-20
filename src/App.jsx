@@ -3,6 +3,8 @@ import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import Body from "./Components/Body";
 import { createContext } from "react";
+import { Provider } from "react-redux";
+import store from "./utils/store";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./App.css";
 import MainContainer from "./Components/MainContainer";
@@ -27,9 +29,11 @@ function App() {
   return (
     <>
       <div>
-        <context.Provider value={{ isSidebar, sidebarHandler }}>
-          <RouterProvider router={router} />
-        </context.Provider>
+        <Provider store={store}>
+          <context.Provider value={{ isSidebar, sidebarHandler }}>
+            <RouterProvider router={router} />
+          </context.Provider>
+        </Provider>
       </div>
     </>
   );
